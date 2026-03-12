@@ -1,3 +1,25 @@
+// Page Loader
+(function () {
+    const overlay = document.getElementById('loaderOverlay');
+    // Block scroll until loaded
+    document.body.classList.add('loading');
+
+    function hideLoader() {
+        overlay.classList.add('loader-hidden');
+        document.body.classList.remove('loading');
+    }
+
+    if (document.readyState === 'complete') {
+        // Page was already loaded (e.g. bfcache restore)
+        setTimeout(hideLoader, 300);
+    } else {
+        window.addEventListener('load', () => setTimeout(hideLoader, 350));
+    }
+
+    // Safety net: never block the page for more than 5 seconds
+    setTimeout(hideLoader, 5000);
+})();
+
 // Live Search
 (function () {
     const input = document.getElementById('liveSearch');

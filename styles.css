@@ -5,6 +5,117 @@
     box-sizing: border-box;
 }
 
+/* ── Page Loader ─────────────────────────────────────── */
+.loader-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+
+.loader-overlay.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loader-logo {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--primary-color, #2563eb), #0ea5e9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: loaderPulse 1.6s ease-in-out infinite;
+}
+
+.loader-logo i {
+    font-size: 2rem;
+    color: #fff;
+}
+
+/* Four-segment spinner ring */
+.loader-ring {
+    position: relative;
+    width: 56px;
+    height: 56px;
+}
+
+.loader-ring div {
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0;
+    border: 4px solid transparent;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: loaderSpin 1.1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+}
+
+.loader-ring div:nth-child(2) {
+    border-top-color: #0ea5e9;
+    animation-delay: -0.275s;
+    inset: 6px;
+}
+
+.loader-ring div:nth-child(3) {
+    border-top-color: #38bdf8;
+    animation-delay: -0.55s;
+    inset: 12px;
+}
+
+.loader-ring div:nth-child(4) {
+    border-top-color: #7dd3fc;
+    animation-delay: -0.825s;
+    inset: 18px;
+}
+
+.loader-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 0.04em;
+}
+
+.loader-dots span {
+    animation: loaderDotBlink 1.4s ease-in-out infinite;
+    opacity: 0;
+}
+
+.loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes loaderSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loaderPulse {
+    0%, 100% { transform: scale(1);   box-shadow: 0 0 0   0 rgba(59,130,246,0.4); }
+    50%       { transform: scale(1.08); box-shadow: 0 0 0 14px rgba(59,130,246,0); }
+}
+
+@keyframes loaderDotBlink {
+    0%, 80%, 100% { opacity: 0; }
+    40%           { opacity: 1; }
+}
+
+/* prevent scroll-jump while loader is visible */
+body.loading {
+    overflow: hidden;
+}
+/* ────────────────────────────────────────────────────── */
+
 :root {
     --primary-color: #2563eb;
     --secondary-color: #0ea5e9;
