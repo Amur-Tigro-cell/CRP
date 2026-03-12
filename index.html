@@ -12,10 +12,23 @@
         (function() {
             var theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
+            // Apply saved font size before paint
+            var fontSize = localStorage.getItem('crp_font_size') || 'normal';
+            if (fontSize !== 'normal') document.documentElement.setAttribute('data-font-size', fontSize);
         })();
     </script>
 </head>
 <body>
+    <!-- Welcome Back Toast -->
+    <div class="wb-toast" id="wbToast" role="status" aria-live="polite" hidden>
+        <i class="fas fa-hand-wave"></i>
+        <div class="wb-toast-body">
+            <span class="wb-toast-title" id="wbTitle">Welcome back!</span>
+            <span class="wb-toast-sub" id="wbSub"></span>
+        </div>
+        <button class="wb-toast-close" id="wbToastClose" aria-label="Dismiss"><i class="fas fa-times"></i></button>
+    </div>
+
     <!-- Page Loader -->
     <div class="loader-overlay" id="loaderOverlay">
         <div class="loader-box">
@@ -47,6 +60,10 @@
                 </div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="font-size-toggle" id="fontSizeToggle" aria-label="Adjust text size" title="Adjust text size">
+                    <i class="fas fa-text-height"></i>
+                    <span class="font-size-label" id="fontSizeLabel">A</span>
                 </button>
                 <div class="hamburger" id="hamburger">
                     <span></span>

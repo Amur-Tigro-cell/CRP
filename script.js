@@ -172,6 +172,142 @@ themeToggle.addEventListener('click', () => {
     updateThemeIcon(newTheme);
 });
 
+// ── Font Size Preference ──────────────────────────────────────────────────────
+(function () {
+    const SIZES   = ['normal', 'large', 'x-large'];
+    const LABELS  = { normal: 'A', large: 'A+', 'x-large': 'A++' };
+    const btn     = document.getElementById('fontSizeToggle');
+    const label   = document.getElementById('fontSizeLabel');
+    if (!btn) return;
+
+    let current = localStorage.getItem('crp_font_size') || 'normal';
+
+    function apply(size) {
+        document.documentElement.setAttribute('data-font-size', size);
+        label.textContent = LABELS[size];
+        btn.title = `Text size: ${LABELS[size]}`;
+        localStorage.setItem('crp_font_size', size);
+        current = size;
+    }
+
+    apply(current);
+
+    btn.addEventListener('click', () => {
+        const next = SIZES[(SIZES.indexOf(current) + 1) % SIZES.length];
+        apply(next);
+    });
+})();
+
+// ── Welcome Back Toast ────────────────────────────────────────────────────────
+(function () {
+    const VISIT_KEY = 'crp_last_visit';
+    const toast     = document.getElementById('wbToast');
+    const titleEl   = document.getElementById('wbTitle');
+    const subEl     = document.getElementById('wbSub');
+    const closeBtn  = document.getElementById('wbToastClose');
+    if (!toast) return;
+
+    function formatAgo(ms) {
+        const s = Math.floor(ms / 1000);
+        if (s < 60)   return 'just now';
+        const m = Math.floor(s / 60);
+        if (m < 60)   return `${m} minute${m > 1 ? 's' : ''} ago`;
+        const h = Math.floor(m / 60);
+        if (h < 24)   return `${h} hour${h > 1 ? 's' : ''} ago`;
+        const d = Math.floor(h / 24);
+        if (d < 30)   return `${d} day${d > 1 ? 's' : ''} ago`;
+        const mo = Math.floor(d / 30);
+        return `${mo} month${mo > 1 ? 's' : ''} ago`;
+    }
+
+    function hideToast() {
+        toast.classList.add('toast-hiding');
+        setTimeout(() => { toast.hidden = true; toast.classList.remove('toast-hiding'); }, 380);
+    }
+
+    const last = localStorage.getItem(VISIT_KEY);
+    const now  = Date.now();
+    localStorage.setItem(VISIT_KEY, now);
+
+    if (last) {
+        const diff = now - Number(last);
+        // Only show if at least 5 minutes have passed (avoid showing on hard-refresh)
+        if (diff > 5 * 60 * 1000) {
+            titleEl.textContent = 'Welcome back!';
+            subEl.textContent   = `Your last visit was ${formatAgo(diff)}.`;
+            toast.hidden = false;
+            // Auto-dismiss after 6 s
+            setTimeout(hideToast, 6000);
+        }
+    }
+
+    closeBtn.addEventListener('click', hideToast);
+})();
+
+// ── Contact Form Draft Auto-Save ──────────────────────────────────────────────
+(function () {
+    const DRAFT_KEY = 'crp_form_draft';
+    const form      = document.getElementById('contactForm');
+    if (!form) return;
+
+    const fields = ['cf-name', 'cf-email', 'cf-subject', 'cf-message'];
+
+    function saveDraft() {
+        const draft = {};
+        fields.forEach(id => { draft[id] = document.getElementById(id).value; });
+        // Only store if at least one field has content
+        const hasContent = Object.values(draft).some(v => v.trim() !== '');
+        if (hasContent) {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        } else {
+            localStorage.removeItem(DRAFT_KEY);
+        }
+    }
+
+    function showDraftBadge() {
+        const header = form.closest('.contact-form-wrapper')?.querySelector('.contact-form-header');
+        if (!header || header.querySelector('.form-draft-badge')) return;
+        const badge = document.createElement('span');
+        badge.className = 'form-draft-badge';
+        badge.innerHTML = '<i class="fas fa-floppy-disk"></i> Draft restored';
+        header.appendChild(badge);
+        // Fade badge out after 5 s
+        setTimeout(() => { badge.style.transition = 'opacity 0.6s'; badge.style.opacity = '0'; }, 5000);
+        setTimeout(() => badge.remove(), 5700);
+    }
+
+    // Restore saved draft on load
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+        try {
+            const draft = JSON.parse(saved);
+            let restored = false;
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && draft[id]) { el.value = draft[id]; restored = true; }
+            });
+            // Update char count
+            const msgEl = document.getElementById('cf-message');
+            const charCount = document.getElementById('charCount');
+            if (msgEl && charCount) charCount.textContent = `${msgEl.value.length} / 1000`;
+            if (restored) showDraftBadge();
+        } catch (_) { localStorage.removeItem(DRAFT_KEY); }
+    }
+
+    // Auto-save with debounce
+    let saveTimer;
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 600); });
+    });
+
+    // Clear draft on successful form submission (hook into the existing submit handler)
+    form.addEventListener('submit', () => {
+        // Delay clear so the existing handler's success path runs first
+        setTimeout(() => localStorage.removeItem(DRAFT_KEY), 1500);
+    });
+})();
+
 // Mobile Menu Toggle
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
