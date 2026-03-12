@@ -1,3 +1,136 @@
+// Live Search
+(function () {
+    const input = document.getElementById('liveSearch');
+    const clearBtn = document.getElementById('searchClear');
+    const countBadge = document.getElementById('searchResultsCount');
+
+    // Groups: each defines which cards to filter and how to extract searchable text
+    const groups = [
+        {
+            selector: '.service-card',
+            container: '.services-grid',
+            getText: card => [card.querySelector('h3'), card.querySelector('p')],
+        },
+        {
+            selector: '.facility-item',
+            container: '.facilities-content',
+            getText: card => [card.querySelector('h4')],
+        },
+        {
+            selector: '.plan-card',
+            container: '.plans-grid',
+            getText: card => [card.querySelector('h3'), card.querySelector('p')],
+        },
+        {
+            selector: '.feature-item',
+            container: '.features-grid',
+            getText: card => [card.querySelector('h4'), card.querySelector('p')],
+        },
+    ].map(group => {
+        const container = document.querySelector(group.container);
+        if (!container) return null;
+
+        // Inject a no-results message element after each grid
+        const noMsg = document.createElement('p');
+        noMsg.className = 'search-no-results';
+        noMsg.innerHTML = '<i class="fas fa-search"></i>No matching results in this section.';
+        noMsg.hidden = true;
+        container.after(noMsg);
+
+        return {
+            cards: Array.from(document.querySelectorAll(group.selector)),
+            noMsg,
+            getText: group.getText,
+        };
+    }).filter(Boolean);
+
+    // Escape regex special chars for safe use in RegExp
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Wrap matching text nodes with a highlight span
+    function highlightNode(el, regex) {
+        if (!el) return;
+        const original = el.getAttribute('data-original') || el.textContent;
+        el.setAttribute('data-original', original);
+        el.innerHTML = original.replace(regex, match => `<mark class="search-highlight">${match}</mark>`);
+    }
+
+    function clearHighlight(el) {
+        if (!el) return;
+        const original = el.getAttribute('data-original');
+        if (original !== null) {
+            el.textContent = original;
+            el.removeAttribute('data-original');
+        }
+    }
+
+    function doSearch(query) {
+        const q = query.trim();
+        const regex = q ? new RegExp(`(${escapeRegex(q)})`, 'gi') : null;
+        let totalVisible = 0;
+
+        groups.forEach(({ cards, noMsg, getText }) => {
+            let groupVisible = 0;
+
+            cards.forEach(card => {
+                const textEls = getText(card);
+                const fullText = textEls.map(el => el ? el.textContent : '').join(' ').toLowerCase();
+                const matches = !q || fullText.includes(q.toLowerCase());
+
+                card.classList.toggle('search-hidden', !matches);
+
+                // Highlight / clear
+                textEls.forEach(el => {
+                    if (matches && regex) {
+                        highlightNode(el, regex);
+                    } else {
+                        clearHighlight(el);
+                    }
+                });
+
+                if (matches) groupVisible++;
+            });
+
+            totalVisible += groupVisible;
+            noMsg.hidden = !q || groupVisible > 0;
+        });
+
+        clearBtn.hidden = !q;
+        if (q) {
+            countBadge.textContent = `${totalVisible} result${totalVisible !== 1 ? 's' : ''} found`;
+            countBadge.hidden = false;
+            // Scroll to the search bar so filtered results are in view
+            if (totalVisible > 0) {
+                document.getElementById('searchSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            countBadge.hidden = true;
+        }
+    }
+
+    let debounce;
+    input.addEventListener('input', () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => doSearch(input.value), 180);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        doSearch('');
+        input.focus();
+    });
+
+    // Allow Escape key to clear
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            input.value = '';
+            doSearch('');
+        }
+    });
+})();
+
 // Dark Mode Toggle
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');

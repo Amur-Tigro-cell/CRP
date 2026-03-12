@@ -659,6 +659,127 @@ section {
     transform: translateX(-50%) translateY(-3px);
 }
 
+/* Live Search Section */
+.search-section {
+    background: var(--bg-color);
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 70px;
+    z-index: 900;
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s ease;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.8rem 2.8rem;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.search-input::placeholder {
+    color: var(--text-light);
+}
+
+/* Remove the native clear button from search inputs */
+.search-input::-webkit-search-cancel-button {
+    display: none;
+}
+
+.search-clear {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.search-clear:hover {
+    color: var(--text-color);
+}
+
+.search-results-count {
+    white-space: nowrap;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+    min-width: 90px;
+    text-align: right;
+}
+
+.search-hidden {
+    display: none !important;
+}
+
+.search-highlight {
+    background: rgba(37, 99, 235, 0.15);
+    border-radius: 3px;
+    padding: 0 2px;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .search-highlight {
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.search-no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-light);
+    font-style: italic;
+    font-size: 1rem;
+}
+
+.search-no-results i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
 /* Dark Mode Toggle */
 .theme-toggle {
     background: none;
