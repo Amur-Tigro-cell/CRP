@@ -6,6 +6,13 @@
     <title>CRP Mirpur, Dhaka - Centre for the Rehabilitation of the Paralysed</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Apply saved theme before paint to prevent flash
+        (function() {
+            var theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -24,6 +31,9 @@
                     <a href="#contact" class="nav-link">Contact</a>
                     <a href="http://www.e-appointment.crp-bangladesh.org/" target="_blank" class="btn-appointment">Book Appointment</a>
                 </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
                 <div class="hamburger" id="hamburger">
                     <span></span>
                     <span></span>

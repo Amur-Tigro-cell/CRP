@@ -16,6 +16,28 @@
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    /* Theme-specific */
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --heading-color: #1e293b;
+    --navbar-bg: rgba(255, 255, 255, 0.98);
+    --navbar-bg-scrolled: rgba(255, 255, 255, 1);
+}
+
+[data-theme="dark"] {
+    --primary-color: #3b82f6;
+    --secondary-color: #38bdf8;
+    --accent-color: #34d399;
+    --dark-color: #020617;
+    --light-color: #1e293b;
+    --text-color: #cbd5e1;
+    --text-light: #94a3b8;
+    --border-color: #334155;
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --heading-color: #e2e8f0;
+    --navbar-bg: rgba(15, 23, 42, 0.98);
+    --navbar-bg-scrolled: rgba(15, 23, 42, 1);
 }
 
 html {
@@ -26,7 +48,8 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background-color: #fff;
+    background-color: var(--bg-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -41,14 +64,14 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.98);
+    background-color: var(--navbar-bg);
     box-shadow: var(--shadow);
     z-index: 1000;
     transition: all 0.3s ease;
 }
 
 .navbar.scrolled {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: var(--navbar-bg-scrolled);
 }
 
 .nav-wrapper {
@@ -288,7 +311,7 @@ section {
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--heading-color);
     margin-bottom: 1rem;
 }
 
@@ -319,7 +342,7 @@ section {
 .feature-item {
     text-align: center;
     padding: 2rem;
-    background: white;
+    background: var(--card-bg);
     border-radius: 10px;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
@@ -339,7 +362,7 @@ section {
 .feature-item h4 {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
-    color: var(--dark-color);
+    color: var(--heading-color);
 }
 
 .feature-item p {
@@ -354,7 +377,7 @@ section {
 }
 
 .service-card {
-    background: white;
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: var(--shadow);
@@ -386,7 +409,7 @@ section {
 .service-card h3 {
     font-size: 1.3rem;
     margin-bottom: 1rem;
-    color: var(--dark-color);
+    color: var(--heading-color);
 }
 
 .service-card p {
@@ -406,7 +429,7 @@ section {
 }
 
 .facility-item {
-    background: white;
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: var(--shadow);
@@ -427,7 +450,7 @@ section {
 
 .facility-item h4 {
     font-size: 1.1rem;
-    color: var(--dark-color);
+    color: var(--heading-color);
 }
 
 /* Future Plans Section */
@@ -577,7 +600,7 @@ section {
 
 .info-card h3 {
     font-size: 1.3rem;
-    color: var(--dark-color);
+    color: var(--heading-color);
     margin-bottom: 1rem;
 }
 
@@ -620,7 +643,7 @@ section {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
+    background: var(--card-bg);
     color: var(--primary-color);
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -634,6 +657,27 @@ section {
     background: var(--primary-color);
     color: white;
     transform: translateX(-50%) translateY(-3px);
+}
+
+/* Dark Mode Toggle */
+.theme-toggle {
+    background: none;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    cursor: pointer;
+    padding: 0.4rem 0.85rem;
+    font-size: 1rem;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    line-height: 1;
+}
+
+.theme-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 /* Footer */
@@ -753,7 +797,7 @@ section {
         left: -100%;
         width: 100%;
         height: calc(100vh - 70px);
-        background-color: white;
+        background-color: var(--bg-color);
         flex-direction: column;
         padding: 2rem;
         transition: left 0.3s ease;
