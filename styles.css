@@ -1647,14 +1647,6 @@ main {
 }
 
 @media (min-width: 768px) {
-    .hero-grid,
-    .solutions-grid,
-    .cta-grid,
-    .insight-grid {
-        grid-template-columns: 1.02fr 0.98fr;
-        align-items: center;
-    }
-
     .feature-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1669,7 +1661,7 @@ main {
 
     .hero-platform-strip,
     .logo-cloud {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         align-items: center;
     }
 
@@ -1681,6 +1673,13 @@ main {
 @media (min-width: 1024px) {
     .hero-grid {
         grid-template-columns: 1.02fr 0.98fr;
+    }
+
+    .solutions-grid,
+    .cta-grid,
+    .insight-grid {
+        grid-template-columns: 1.02fr 0.98fr;
+        align-items: center;
     }
 
     .feature-grid {
@@ -1697,6 +1696,11 @@ main {
     }
 
     .hero-proof {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero-platform-strip,
+    .logo-cloud {
         grid-template-columns: repeat(3, 1fr);
     }
 
