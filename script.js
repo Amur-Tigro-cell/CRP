@@ -423,6 +423,89 @@ AOS.init({
     offset: 60,
 });
 
+// Contact Form Validation
+(function () {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    const fields = {
+        name:    { el: document.getElementById('cf-name'),    err: document.getElementById('err-name'),    fg: document.getElementById('fg-name') },
+        email:   { el: document.getElementById('cf-email'),   err: document.getElementById('err-email'),   fg: document.getElementById('fg-email') },
+        subject: { el: document.getElementById('cf-subject'), err: document.getElementById('err-subject'), fg: document.getElementById('fg-subject') },
+        message: { el: document.getElementById('cf-message'), err: document.getElementById('err-message'), fg: document.getElementById('fg-message') },
+    };
+    const charCount  = document.getElementById('charCount');
+    const submitBtn  = document.getElementById('submitBtn');
+    const btnText    = submitBtn.querySelector('.btn-submit-text');
+    const btnLoading = submitBtn.querySelector('.btn-submit-loading');
+    const formSuccess = document.getElementById('formSuccess');
+
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const rules = {
+        name(v)    { if (!v) return 'Full name is required.'; if (v.length < 2) return 'Name must be at least 2 characters.'; if (/\d/.test(v)) return 'Name should not contain numbers.'; return ''; },
+        email(v)   { if (!v) return 'Email address is required.'; if (!EMAIL_RE.test(v)) return 'Please enter a valid email address.'; return ''; },
+        subject(v) { if (!v) return 'Subject is required.'; if (v.length < 3) return 'Subject must be at least 3 characters.'; return ''; },
+        message(v) { if (!v) return 'Message is required.'; if (v.length < 20) return `Message is too short (${v.length}/20 characters minimum).`; return ''; },
+    };
+
+    function validate(key) {
+        const { el, err, fg } = fields[key];
+        const msg = rules[key](el.value.trim());
+
+        err.textContent = msg;
+        fg.classList.toggle('error', !!msg);
+        fg.classList.toggle('valid', !msg && el.value.trim() !== '');
+
+        return !msg;
+    }
+
+    // Blur: validate on leaving a field (don't mark clean fields as errors before touch)
+    Object.keys(fields).forEach(key => {
+        const { el } = fields[key];
+        el.addEventListener('blur', () => validate(key));
+        // Live re-validate once the field has been touched
+        el.addEventListener('input',  () => { if (fields[key].fg.classList.contains('error') || fields[key].fg.classList.contains('valid')) validate(key); });
+    });
+
+    // Character counter for message
+    fields.message.el.addEventListener('input', () => {
+        const len = fields.message.el.value.length;
+        charCount.textContent = `${len} / 1000`;
+        charCount.classList.toggle('near-limit', len >= 800 && len < 1000);
+        charCount.classList.toggle('at-limit',   len >= 1000);
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Validate all fields on submit
+        const allValid = Object.keys(fields).map(k => validate(k)).every(Boolean);
+        if (!allValid) {
+            // Scroll to first error
+            const firstErr = form.querySelector('.form-group.error input, .form-group.error textarea');
+            if (firstErr) firstErr.focus();
+            return;
+        }
+
+        // Simulate async send
+        submitBtn.disabled = true;
+        btnText.hidden   = true;
+        btnLoading.hidden = false;
+
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            btnText.hidden   = false;
+            btnLoading.hidden = true;
+            formSuccess.hidden = false;
+            form.reset();
+            charCount.textContent = '0 / 1000';
+            Object.keys(fields).forEach(k => { fields[k].fg.classList.remove('valid', 'error'); });
+            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 1200);
+    });
+})();
+
 // Log page load
 console.log('CRP Mirpur Website Loaded Successfully');
 console.log('Website developed for Centre for the Rehabilitation of the Paralysed - Mirpur, Dhaka');
