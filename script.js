@@ -1,7 +1,6 @@
 const STORAGE_KEYS = {
     theme: 'theme',
     fontSize: 'crp_font_size',
-    lastVisit: 'crp_last_visit',
     formDraft: 'crp_form_draft',
     solution: 'crp_selected_solution',
 };
@@ -97,52 +96,6 @@ themeToggle?.addEventListener('click', () => {
         const nextSize = sizes[(sizes.indexOf(currentSize) + 1) % sizes.length];
         applyFontSize(nextSize);
     });
-})();
-
-// Welcome back toast
-(function initWelcomeToast() {
-    const toast = document.getElementById('wbToast');
-    const title = document.getElementById('wbTitle');
-    const sub = document.getElementById('wbSub');
-    const close = document.getElementById('wbToastClose');
-    if (!toast || !title || !sub || !close) return;
-
-    function formatAgo(diffMs) {
-        const seconds = Math.floor(diffMs / 1000);
-        if (seconds < 60) return 'just now';
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
-        const days = Math.floor(hours / 24);
-        if (days < 30) return `${days} day${days === 1 ? '' : 's'} ago`;
-        const months = Math.floor(days / 30);
-        return `${months} month${months === 1 ? '' : 's'} ago`;
-    }
-
-    function hideToast() {
-        toast.classList.add('toast-hiding');
-        setTimeout(() => {
-            toast.hidden = true;
-            toast.classList.remove('toast-hiding');
-        }, 320);
-    }
-
-    const now = Date.now();
-    const previousVisit = safeStorageGet(STORAGE_KEYS.lastVisit);
-    safeStorageSet(STORAGE_KEYS.lastVisit, String(now));
-
-    if (previousVisit) {
-        const diff = now - Number(previousVisit);
-        if (diff > 5 * 60 * 1000) {
-            title.textContent = 'Welcome back';
-            sub.textContent = `Your last visit was ${formatAgo(diff)}.`;
-            toast.hidden = false;
-            setTimeout(hideToast, 6000);
-        }
-    }
-
-    close.addEventListener('click', hideToast);
 })();
 
 // Mobile navigation
@@ -424,9 +377,16 @@ document.querySelectorAll('.ripple-btn').forEach(button => {
         return !message;
     }
 
+    function hideSuccessMessage() {
+        if (successBox) {
+            successBox.hidden = true;
+        }
+    }
+
     Object.entries(fields).forEach(([key, { el, group }]) => {
         el?.addEventListener('blur', () => validateField(key));
         el?.addEventListener('input', () => {
+            hideSuccessMessage();
             if (group?.classList.contains('error') || group?.classList.contains('valid')) {
                 validateField(key);
             }
@@ -444,6 +404,7 @@ document.querySelectorAll('.ripple-btn').forEach(button => {
 
     form.addEventListener('submit', event => {
         event.preventDefault();
+        hideSuccessMessage();
         const allValid = Object.keys(fields).map(validateField).every(Boolean);
         if (!allValid) {
             const firstInvalid = form.querySelector('.form-group.error input, .form-group.error textarea');
